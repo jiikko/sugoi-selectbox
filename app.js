@@ -45,42 +45,45 @@ var Display = {
 
 var DropDown = {
   init: function (select){ //  draw
-    var base_div = document.createElement("div"); // ベースの
-    base_div.id = "dropdown-base";
     $el = $(select.el);
 
-    $("#selected-value").on("click", function () {
+    var base_div = document.createElement("div"); // ベースの
+    base_div.id = "dropdown-base";
+
+    var list_div = document.createElement("div");
+    list_div.id = "selected-list";
+
+    var current_value_span = document.createElement("span"); // ここじゃないほうがいい
+    current_value_span.id = "selected-value";
+    current_value_span.className = "currentValue";
+    base_div.appendChild(current_value_span); // 表示用
+    base_div.appendChild(list_div);
+
+    $(base_div).find(".currentValue").on("click", function () {
+      console.log("clicked currentValue");
       $(select.el).trigger('clicked');
     });
 
     var draw = function () {
-      $(base_div).find("#selected-list").remove() // 初期化
-      list_div = document.createElement("div"); // ベースの
-      list_div.id = "selected-list";
-
+      $(base_div).find("#selected-list li").remove()
       var reslt_list = ResultList.init(select);
       $.each($el.find("option"), function () {
         reslt_list.createLists($(this).html())
       });
-
-      var span = document.createElement("span"); // ここじゃないほうがいい
-      span.id = "selected-value";
-      span.className = "currentValue";
-      base_div.appendChild(span); // 表示用
       list_div.appendChild(
         reslt_list.htmledLists()
       );
-      base_div.appendChild(list_div);
-      this.container = base_div;
-      select.el.after(this.container);
     }
     draw();
+    base_div.appendChild(list_div);
+    select.el.after(base_div);
 
     return {
       redraw: function () {
-        draw();
+        draw()
       },
       toggle: function () {
+        console.log("toggled list");
         $(list_div).toggle()
       },
       container: function () {
@@ -92,9 +95,9 @@ var DropDown = {
 
 var VartialSelectBox = {
   init: function (select) {
-    $("#selected-value").on("click", function () {
-      $(select.el).trigger('clicked');
-    });
+    // $("#selected-value").on("click", function () {
+    //   $(select.el).trigger('clicked');
+    // });
     return {
     }
   }
@@ -111,11 +114,9 @@ var Select = {
     this.vsb =      VartialSelectBox.init(this);
 
     $(this.el).on('clicked', this.el, function () {
-      console.log("toggled");
       self.dropdown.toggle();
     });
-
-      self.dropdown.toggle();
+    self.dropdown.toggle();
   }
 };
 
