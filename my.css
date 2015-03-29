@@ -1,0 +1,11 @@
+ul li:hover {
+  background-color: red;
+}
+
+#dropdown-base {
+  background-color: yellow;
+}
+
+#selected-value {
+  background-color: blue;
+}
