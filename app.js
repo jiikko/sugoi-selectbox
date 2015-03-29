@@ -27,13 +27,14 @@ var ResultList = {
 
 var Display = {
   init: function (select) {
-    var $container = $(select.dropdown.container())
     // dropdownoオブジェクトに依存してるん微妙
-    $container.find("[data-selected-value]").html('未選択');
+    var $container = select.dropdown.container();
+    var $selectedValue = $container.find("[data-selected-value]");
+    $selectedValue.html('未選択'); // 初期化
 
     return {
       show: function (node) {
-        $container.find("[data-selected-value]").html(node);
+        $selectedValue.html(node);
         select.dropdown.redraw();
       }
     }
@@ -43,25 +44,25 @@ var Display = {
 var DropDown = {
   init: function (select){ //  draw
     var $el = $(select.el);
-    var base_div = new String +
-      "<div data-selected-base=''>"   +
-        "<span class=currentValue data-selected-value></span>"   +
-        "<div data-selected-list=''>" +
-        "</div>"                      +
+    var base_div = new String                                  +
+      "<div data-selected-base=''>"                            +
+        "<span class=currentValue data-selected-value></span>" +
+        "<div data-selected-list></div>"                       +
       "</div>";
-    $base_div = $(base_div);
+    var $base_div = $(base_div);
     var list_div = $base_div.find("[data-selected-list]");
+    var current_value_span = $base_div.find("[data-selected-value]");
 
-    $base_div.find(".currentValue").on("click", function () {
+    current_value_span.on("click", function () {
       console.log("clicked currentvalue");
       $(select.el).trigger('clicked');
     });
 
     var draw = function () {
-      $base_div.find("[data-selected-list] ul").remove()
+      $base_div.find("[data-selected-list] ul").remove();
       var reslt_list = ResultList.init(select);
       $.each($el.find("option"), function () {
-        reslt_list.createLists($(this).html())
+        reslt_list.createLists($(this).html());
       });
       list_div.append(
         reslt_list.htmledLists()
@@ -72,11 +73,11 @@ var DropDown = {
 
     return {
       redraw: function () {
-        draw()
+        draw();
       },
       toggle: function () {
         console.log("toggled list");
-        $(list_div).toggle()
+        $(list_div).toggle();
       },
       container: function () {
         return $base_div;
