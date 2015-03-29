@@ -6,6 +6,6 @@ ul li:hover {
   background-color: yellow;
 }
 
-#selected-value {
+.currentValue {
   background-color: blue;
 }
