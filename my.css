@@ -1,11 +1,11 @@
 ul li:hover {
-  background-color: red;
-}
-
-#dropdown-base {
-  background-color: yellow;
+//  background-color: red;
 }
 
 .currentValue {
-  background-color: blue;
+  background-color: yellow;
+}
+
+.highlight {
+  background-color: red;
 }
