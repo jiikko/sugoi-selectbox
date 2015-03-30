@@ -93,6 +93,9 @@ var ResultList = {
         });
         return $ul;
       },
+      clear: function () {
+        lists = [];
+      }
     }
   }
 }
@@ -128,6 +131,7 @@ var DropDown = {
     var list_div = $base_div.find("[data-selected-list]");
     var dropdown_div = $base_div.find("[data-dropdown]");
     var current_value_span = $base_div.find("[data-selected-value]");
+    var reslt_list = ResultList.init(select, dropdown_div);
 
     current_value_span.on("click", function () {
       console.log("clicked currentvalue");
@@ -135,8 +139,8 @@ var DropDown = {
     });
 
     var draw = function () {
+      reslt_list.clear();
       $base_div.find("[data-selected-list] ul").remove();
-      var reslt_list = ResultList.init(select, dropdown_div);
       $.each($el.find("option"), function () {
         reslt_list.createLists($(this).html());
       });
