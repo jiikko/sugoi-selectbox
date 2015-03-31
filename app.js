@@ -19,14 +19,15 @@ KEY = {
 };
 
 var ResultList = {
-  init: function (select, dropdown_div) {
+  init: function (select) {
     var self = this;
     var lists = [];
     var currentIndex = 0;
+    var $container = $(select.container);
 
     this.getSelectionIndex = function () {
       var index;
-      dropdown_div.find("li").each(function (i, item) {
+      $container.find("li").each(function (i, item) {
         if($(item).hasClass("highlight")) {
           index = i;
         }
@@ -45,7 +46,7 @@ var ResultList = {
     };
 
     this.setSelection = function (index) {
-      dropdown_div.find("li").each(function (i, item) {
+      $container.find("li").each(function (i, item) {
         if(i == index) {
           $(item).addClass("highlight");
         } else {
@@ -55,11 +56,11 @@ var ResultList = {
     };
 
     this.enter = function () {
-      li = dropdown_div.find("li").get(this.getSelectionIndex());
+      li = $container.find("li").get(this.getSelectionIndex());
       li.click();
     };
 
-    dropdown_div.find("input").on("keyup", function (e) {
+    $container.find("input").on("keyup", function (e) {
       console.log(e.which);
       switch (e.which) {
         case KEY.ENTER:
@@ -82,7 +83,7 @@ var ResultList = {
           console.log("ok click");
           $(this).remove();
           select.display.show(this);
-          $(select.el).trigger('clicked');
+          select.el.trigger('clicked');
         });
         lists.push($li);
       },
@@ -102,8 +103,7 @@ var ResultList = {
 
 var Display = {
   init: function (select) {
-    // dropdownoオブジェクトに依存してるん微妙
-    var $container = select.dropdown.container();
+    var $container = $(select.container);
     var $selectedValue = $container.find("[data-selected-value]");
     $selectedValue.html('未選択'); // 初期化
 
@@ -119,19 +119,11 @@ var Display = {
 var DropDown = {
   init: function (select){ //  draw
     var $el = $(select.el);
-    var base_div = new String                                  +
-      "<div data-selected-base>"                               +
-        "<span class=currentValue data-selected-value></span>" +
-        "<div data-dropdown>"                                  +
-          "<input type='text'>"                                +
-          "<div data-selected-list></div>"                     +
-        "</div>"                                               +
-      "</div>";
-    var $base_div = $(base_div);
-    var list_div = $base_div.find("[data-selected-list]");
-    var dropdown_div = $base_div.find("[data-dropdown]");
-    var current_value_span = $base_div.find("[data-selected-value]");
-    var reslt_list = ResultList.init(select, dropdown_div);
+    var $container = $(select.container);
+    var list_div = $container.find("[data-selected-list]");
+    var current_value_span = $container.find("[data-selected-value]");
+    var dropdown_div = $container.find("[data-dropdown]");
+    var reslt_list = ResultList.init(select);
 
     current_value_span.on("click", function () {
       console.log("clicked currentvalue");
@@ -140,8 +132,9 @@ var DropDown = {
 
     var draw = function () {
       reslt_list.clear();
-      $base_div.find("[data-selected-list] ul").remove();
-      $.each($el.find("option"), function () {
+      $container.find("[data-selected-list] li").remove();
+
+      $.each(select.el.find("option"), function () {
         reslt_list.createLists($(this).html());
       });
       list_div.append(
@@ -149,7 +142,6 @@ var DropDown = {
       );
     }
     draw();
-    select.el.after($base_div);
 
     return {
       redraw: function () {
@@ -160,9 +152,6 @@ var DropDown = {
         $(dropdown_div).toggle();
         $(dropdown_div).find("input").select();
       },
-      container: function () {
-        return $base_div;
-      }
     }
   }
 };
@@ -172,16 +161,24 @@ var DropDown = {
 var Select = {
   init: function (el) {
     var self = this;
-    this.el = el;
-    $(el).hide();
-
+    this.el = $(el);
+    this.el.hide();
+    var container = new String                                   +
+      "<div data-selected-base>"                                 +
+        "<span class=currentValue data-selected-value></span>"   +
+        "<div data-dropdown>"                                    +
+          "<input type='text'>"                                  +
+          "<div data-selected-list></div>"                       +
+        "</div>"                                                 +
+      "</div>";
+    this.el.after(container);
+    this.container = this.el.next();
     this.dropdown = DropDown.init(this);
     this.display =  Display.init(this);
-
-    $(this.el).on('clicked', this.el, function () {
+    this.el.on('clicked', this.el, function () {
       self.dropdown.toggle();
     });
-    self.dropdown.toggle();
+    this.dropdown.toggle();
   }
 };
 
