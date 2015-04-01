@@ -24,21 +24,19 @@
   Selection = {
     init: function (select) {
       var $container = $(select.container);
-      var getIndex = function () { // private でいける?:
-        var index;
-        $container.find("li").each(function (i, item) {
-          if($(item).hasClass("highlight")) {
-            index = i;
-          }
-        })
-        return index;
-      };
 
       return {
-        set: function () {
+        getIndex: function () { // private でいける?:
+          var index;
+          $container.find("li").each(function (i, item) {
+            if($(item).hasClass("highlight")) {
+              index = i;
+            }
+          })
+          return index;
         },
         move: function (relative_position) {
-          var current = getIndex() + relative_position;
+          var current = this.getIndex() + relative_position;
           var move_to_position = 0
             if(current > 0) {
               move_to_position = current;
@@ -56,7 +54,7 @@
           });
         },
         enter: function () {
-          li = $container.find("li").get(getIndex());
+          li = $container.find("li").get(this.getIndex());
           li.click();
         }
       }
@@ -71,7 +69,6 @@
       var $container = $(select.container);
 
       $container.find("input").on("keyup", function (e) {
-        console.log(e.which);
         switch (e.which) {
           case KEY.ENTER:
             select.selection.enter();
@@ -88,13 +85,14 @@
         createLists: function (value) {
           var $li = $("<li>");
           $li.html(value);
-          // li.addEventListener("click", function() {
-          $li.hover(function() {
-            console.log(this)
-            //
-          });
+          $li.hover( // ???????????
+            function () {
+              console.log("in" + this);
+            }, function () {
+              console.log("out" + this);
+            }
+          );
           $li.click(function(e) {
-            console.log("ok click");
             $(this).remove();
             select.display.show(this);
             select.el.trigger('clicked');
