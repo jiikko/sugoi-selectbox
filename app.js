@@ -35,6 +35,15 @@
       var $container = select.$container;
 
       return {
+        isOver: function (relative_position) {
+          var next_position = this.getIndex() + relative_position;
+          if(
+              $container.find("li").length <= next_position ||
+              next_position < 0
+            ) {
+              return true;
+          }
+        },
         getIndex: function () {
           var index;
           $container.find("li").each(function (i, item) {
@@ -71,15 +80,16 @@
             li.click();
           }
         },
-        setDefaulte: function () {
+        setDefault: function () {
           var currentvalue = $container.find("span").html();
           if(currentvalue) {
-              $container.find("li").each(function (i, item) {
-                if(currentvalue == $(item).html()) {
-                  select.selection.set(i);
-                  return;
-                }
-              });
+            $container.find("li").each(function (i, item) {
+              if(currentvalue == $(item).html()) {
+                select.selection.set(i);
+                return;
+              }
+            });
+            this.set(0);
           }
         }
       }
@@ -106,9 +116,11 @@
           case KEY.ENTER:
             select.selection.enter();
           case KEY.UP:
+            if(select.selection.isOver(-1)) { return; }
             select.selection.move(-1);
             return;
           case KEY.DOWN:
+            if(select.selection.isOver(1)) { return; }
             select.selection.move(1);
         return;
         };
@@ -162,6 +174,7 @@
         },
         update: function (query) {
           this.createList(query);
+          select.selection.setDefault();
         },
         initSearchField: function () {
           return SearchField.init(select, this);
@@ -220,8 +233,8 @@
         toggle: function () {
           console.log("toggled list");
           $dropdown_div.toggle();
-          if(this.isOpen) {
-            select.selection.setDefaulte()
+          if(this.isOpen()) {
+            select.selection.setDefault();
             $dropdown_div.find("input").select();
           }
         },
