@@ -1,5 +1,5 @@
 (function ($) {
-  var KEY, ResultList, Select, Selection;
+  var KEY, ResultList, Select, Selectionm, Container;
 
   KEY = {
       TAB: 9,
@@ -21,9 +21,18 @@
       DELETE: 46
   };
 
+  Container = new String                                         +
+        "<div data-selected-base>"                               +
+          "<span class=currentValue data-selected-value></span>" +
+          "<div data-dropdown>"                                  +
+            "<input type='text'>"                                +
+            "<div data-selected-list></div>"                     +
+          "</div>"                                               +
+        "</div>";
+
   Selection = {
     init: function (select) {
-      var $container = $(select.container);
+      var $container = select.$container;
 
       return {
         getIndex: function () { // private でいける?:
@@ -43,6 +52,11 @@
             }
           console.log(move_to_position);
           this.set(move_to_position);
+        },
+        clear: function (index) {
+          $container.find("li").each(function (i, item) {
+              $(item).removeClass("highlight");
+          });
         },
         set: function (index) {
           $container.find("li").each(function (i, item) {
@@ -66,7 +80,7 @@
       var self = this;
       var lists = [];
       var currentIndex = 0;
-      var $container = $(select.container);
+      var $container = select.$container;
 
       $container.find("input").on("keyup", function (e) {
         switch (e.which) {
@@ -85,11 +99,17 @@
         createLists: function (value) {
           var $li = $("<li>");
           $li.html(value);
-          $li.hover( // ???????????
+          $li.hover(
             function () {
-              console.log("in" + this);
+              var self = this;
+              $container.find("li").each(function (i, item) {
+                if(self == item) {
+                  select.selection.set(i);
+                  return;
+                }
+              });
             }, function () {
-              console.log("out" + this);
+              select.selection.clear();
             }
           );
           $li.click(function(e) {
@@ -115,7 +135,7 @@
 
   var Display = {
     init: function (select) {
-      var $container = $(select.container);
+      var $container = select.$container;
       var $selectedValue = $container.find("[data-selected-value]");
       $selectedValue.html('未選択'); // 初期化
 
@@ -131,7 +151,7 @@
   var DropDown = {
     init: function (select){ //  draw
       var $el = $(select.el);
-      var $container = $(select.container);
+      var $container = select.$container;
       var list_div = $container.find("[data-selected-list]");
       var current_value_span = $container.find("[data-selected-value]");
       var dropdown_div = $container.find("[data-dropdown]");
@@ -174,17 +194,8 @@
       var self = this;
       this.el = $(el);
       this.el.hide();
-      var container = new String                                   +
-        "<div data-selected-base>"                                 +
-          "<span class=currentValue data-selected-value></span>"   +
-          "<div data-dropdown>"                                    +
-            "<input type='text'>"                                  +
-            "<div data-selected-list></div>"                       +
-          "</div>"                                                 +
-        "</div>";
-      this.el.after(container);
-      this.container = this.el.next();
-
+      this.el.after(Container);
+      this.$container = $(this.el.next());
       this.selection = Selection.init(this);
       this.dropdown = DropDown.init(this);
       this.display =  Display.init(this);
