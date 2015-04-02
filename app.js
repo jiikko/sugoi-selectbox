@@ -1,5 +1,5 @@
 (function ($) {
-  var KEY, ResultList, Select, Selectionm, Container;
+  var KEY, ResultList, Select, Selectionm, Container, SearchField;
 
   KEY = {
       TAB: 9,
@@ -35,7 +35,7 @@
       var $container = select.$container;
 
       return {
-        getIndex: function () { // private でいける?:
+        getIndex: function () {
           var index;
           $container.find("li").each(function (i, item) {
             if($(item).hasClass("highlight")) {
@@ -60,7 +60,7 @@
         },
         set: function (index) {
           $container.find("li").each(function (i, item) {
-            if(i == index) {
+            if(i === index) {
               $(item).addClass("highlight");
             } else {
               $(item).removeClass("highlight");
@@ -68,19 +68,29 @@
           });
         },
         enter: function () {
-          li = $container.find("li").get(this.getIndex());
-          li.click();
+          if(this.getIndex() !== undefined) {
+            li = $container.find("li").get(this.getIndex());
+            li.click();
+          }
         }
       }
     }
   }
 
-  ResultList = {
-    init: function (select) {
-      var self = this;
-      var lists = [];
-      var currentIndex = 0;
+  SearchField = {
+    init: function (select, resultList) {
       var $container = select.$container;
+
+      $container.find("input").on("keyup", function (e) {
+        if (
+          e.which >= 48             ||
+          e.which === KEY.SPACE     ||
+          e.which === KEY.BACKSPACE ||
+          e.which === KEY.DELETE
+        ) {
+          resultList.update($(this).val());
+        }
+      });
 
       $container.find("input").on("keyup", function (e) {
         switch (e.which) {
@@ -96,10 +106,20 @@
       });
 
       return {
-        createLists: function (value) {
-          var $li = $("<li>");
-          $li.html(value);
-          $li.hover(
+      }
+    }
+  }
+
+  ResultList = {
+    init: function (select) {
+      var self = this;
+      var lists = [];
+      var currentIndex = 0;
+      var $container = select.$container;
+      var add = function (value) {
+        var $li = $("<li>");
+        $li.html(value);
+        $li.hover(
             function () {
               var self = this;
               $container.find("li").each(function (i, item) {
@@ -111,14 +131,16 @@
             }, function () {
               select.selection.clear();
             }
-          );
-          $li.click(function(e) {
-            $(this).remove();
-            select.display.show(this);
-            select.el.trigger('clicked');
-          });
-          lists.push($li);
-        },
+            );
+        $li.click(function(e) {
+          $(this).remove();
+          select.display.show(this);
+          select.el.trigger('clickedList');
+        });
+        lists.push($li);
+      };
+
+      return {
         htmledLists: function() {
           var $ul = $("<ul>");
           $.each(lists, function(i, item){
@@ -128,6 +150,26 @@
         },
         clear: function () {
           lists = [];
+        },
+        update: function (query) {
+          this.createList(query);
+        },
+        initSearchField: function () {
+          return SearchField.init(select, this);
+        }
+        ,
+        createList: function (query) {
+          this.clear();
+          $container.find("[data-selected-list] ul").remove();
+          $.each(select.el.find("option"), function () {
+            $li = $(this);
+            if((new RegExp(query)).test($li.html())) {
+              add($(this).html());
+            }
+          });
+          $container.find("[data-selected-list]").append(
+            this.htmledLists()
+          );
         }
       }
     }
@@ -142,7 +184,7 @@
       return {
         show: function (node) {
           $selectedValue.html($(node).html());
-          select.dropdown.redraw();
+          select.dropdown.createList();
         }
       }
     }
@@ -152,38 +194,30 @@
     init: function (select){ //  draw
       var $el = $(select.el);
       var $container = select.$container;
-      var list_div = $container.find("[data-selected-list]");
       var current_value_span = $container.find("[data-selected-value]");
-      var dropdown_div = $container.find("[data-dropdown]");
+      var $dropdown_div = $container.find("[data-dropdown]");
       var reslt_list = ResultList.init(select);
+      reslt_list.initSearchField();
 
       current_value_span.on("click", function () {
-        console.log("clicked currentvalue");
-        $(select.el).trigger('clicked');
+        $(select.el).trigger('clickedList');
       });
-
-      var draw = function () {
-        reslt_list.clear();
-        $container.find("[data-selected-list] li").remove();
-
-        $.each(select.el.find("option"), function () {
-          reslt_list.createLists($(this).html());
-        });
-        list_div.append(
-          reslt_list.htmledLists()
-        );
-      }
-      draw();
+      reslt_list.createList();
 
       return {
-        redraw: function () {
-          draw();
+        createList: function () {
+          reslt_list.createList()
         },
         toggle: function () {
           console.log("toggled list");
-          $(dropdown_div).toggle();
-          $(dropdown_div).find("input").select();
+          $dropdown_div.toggle();
+          if(this.isOpen) {
+            $dropdown_div.find("input").select();
+          }
         },
+        isOpen: function () {
+          return $dropdown_div.is(':visible')
+        }
       }
     }
   };
@@ -200,7 +234,7 @@
       this.dropdown = DropDown.init(this);
       this.display =  Display.init(this);
 
-      this.el.on('clicked', this.el, function () {
+      this.el.on('clickedList', this.el, function () {
         self.dropdown.toggle();
       });
       this.dropdown.toggle();
