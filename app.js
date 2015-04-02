@@ -235,6 +235,7 @@
           $dropdown_div.toggle();
           if(this.isOpen()) {
             select.selection.setDefault();
+            reslt_list.update($container.find("input").val());
             $dropdown_div.find("input").select();
           }
         },
