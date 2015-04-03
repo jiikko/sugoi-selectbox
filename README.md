@@ -1,9 +1,14 @@
 # SugoiSelecbox
+jQuery based replacement for select boxes.
 
 ## Features
 * sugoi
 
-## Useage
+## 動作確認しているブラウザ
+* Chrome
+* FireFox
+
+## Usage
 ```javascript
 $("#select").suguiSelectbox()
 ```
