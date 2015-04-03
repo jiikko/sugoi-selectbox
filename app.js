@@ -1,5 +1,5 @@
 (function ($) {
-  var KEY, ResultList, Select, Selectionm, Container, SearchField;
+  var KEY, ResultList, Select, Selectionm, Container, SearchField, HiddenField;
 
   KEY = {
       TAB:        9,
@@ -24,10 +24,11 @@
   Container = new String +
         "<div data-sugoi-selectbox>" +
           "<span class=currentValue data-sugoi-selectbox-current-value></span>" +
-          "<div data-sugoi-selectbox-dropdown>" +
+         "<div data-sugoi-selectbox-dropdown>" +
             "<input type='text' autocomplete='off'>" +
             "<div data-sugoi-selectbox-list></div>" +
           "</div>" +
+          "<input type='hidden'>" +
         "</div>";
 
   Selection = {
@@ -47,7 +48,7 @@
         getIndex: function () {
           var index;
           $container.find("li").each(function (i, item) {
-            if($(item).hasClass("highlight")) {
+            if($(item).hasClass("sugoi-highlight")) {
               index = i;
             }
           })
@@ -63,14 +64,14 @@
           this.set(move_to_position);
         },
         clear: function (index) {
-          $container.find("li").removeClass("highlight");
+          $container.find("li").removeClass("sugoi-highlight");
         },
         set: function (index) {
           $container.find("li").each(function (i, item) {
             if(i === index) {
-              $(item).addClass("highlight");
+              $(item).addClass("sugoi-highlight");
             } else {
-              $(item).removeClass("highlight");
+              $(item).removeClass("sugoi-highlight");
             }
           });
         },
@@ -93,6 +94,22 @@
             });
             if(!is_finded) { this.set(0); }
           }
+        }
+      }
+    }
+  }
+
+  HiddenField = {
+    init: function (select) {
+      var $container = select.$container;
+      var $hiddenField = $container.find("input[type=hidden]");
+      $hiddenField.attr("name", select.el.attr("name"));
+
+      return {
+        set: function () {
+          $container.find("input[type=hidden]").val(
+            $container.find("[data-sugoi-selectbox-current-value]").attr("data-id")
+          );
         }
       }
     }
@@ -144,9 +161,10 @@
       var lists = [];
       var currentIndex = 0;
       var $container = select.$container;
-      var add = function (value) {
+      var add = function (obj) {
         var $li = $("<li>");
-        $li.html(value);
+        $li.html(obj.name);
+        $li.attr("data-id", obj["data-id"]);
         $li.hover(
           function () {
             var self = this;
@@ -199,7 +217,10 @@
           $.each(select.el.find("option"), function () {
             $li = $(this);
             if((new RegExp(query)).test($li.html())) {
-              add($(this).html());
+              add({
+                "data-id": $li.val(),
+                "name": $li.html()
+              });
             }
           });
           $container.find("[data-sugoi-selectbox-list]").append(
@@ -218,8 +239,11 @@
 
       return {
         show: function (node) {
-          $selectedValue.html($(node).html());
+          var $node = $(node);
+          $selectedValue.html($node.html());
+          $selectedValue.attr("data-id", $node.attr("data-id"));
           select.dropdown.createList();
+          select.hiddenField.set();
         }
       }
     }
@@ -237,6 +261,7 @@
         $(select.el).trigger('clickedList');
       });
       resultList.createList();
+
       (function () {
         var isHover = true;
         $(select.$container).hover(function () {
@@ -279,6 +304,7 @@
       this.el.hide();
       this.el.after(Container);
       this.$container = $(this.el.next());
+      this.hiddenField = HiddenField.init(this);
       this.selection = Selection.init(this);
       this.dropdown = DropDown.init(this);
       this.display =  Display.init(this);
