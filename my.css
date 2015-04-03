@@ -1,11 +1,19 @@
-ul li:hover {
-//  background-color: red;
+[data-sugoi-selectbox] {
+  border: 1px solid #000000;
 }
 
 [data-sugoi-selectbox-current-value] {
   background-color: yellow;
 }
 
+[data-sugoi-selectbox-list] ul {
+  padding: 0px;
+}
+
+[data-sugoi-selectbox-list] li {
+    list-style-type: none;
+}
+
 .highlight {
-  background-color: red;
+  background: #3875d7;
 }

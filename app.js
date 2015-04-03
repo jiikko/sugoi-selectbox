@@ -23,7 +23,7 @@
 
   Container = new String +
         "<div data-sugoi-selectbox>" +
-        "<span class=currentValue data-sugoi-selectbox-current-value></span>" +
+          "<span class=currentValue data-sugoi-selectbox-current-value></span>" +
           "<div data-sugoi-selectbox-dropdown>" +
             "<input type='text'>" +
             "<div data-sugoi-selectbox-list></div>" +
