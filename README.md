@@ -1,10 +1,9 @@
-# SugoiSlecbox
+# SugoiSelecbox
 
-## Feature
+## Features
 * sugoi
 
 ## Useage
-```
-coffee:
-  $("#approach_form_product_id").suguiSelectbox()
+```javascript
+$("#select").suguiSelectbox()
 ```

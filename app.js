@@ -124,7 +124,10 @@
           e.which >= 48             ||
           e.which === KEY.SPACE     ||
           e.which === KEY.BACKSPACE ||
-          e.which === KEY.DELETE
+          e.which === KEY.DELETE    ||
+          e.which === KEY.ENTER     ||
+          e.which === KEY.LEFT      ||
+          e.which === KEY.RIGHT
         ) {
           resultList.update();
         }
