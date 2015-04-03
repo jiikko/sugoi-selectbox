@@ -221,6 +221,7 @@
                 this.search.on("keydown", function (e) {
                     switch (e.which) {
                     case KEY.TAB:
+                      console.log(e.which);
                         e.preventDefault();
                         self.select();
                         return;

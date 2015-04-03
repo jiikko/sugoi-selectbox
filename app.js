@@ -2,23 +2,23 @@
   var KEY, ResultList, Select, Selectionm, Container, SearchField;
 
   KEY = {
-      TAB: 9,
-      ENTER: 13,
-      ESC: 27,
-      SPACE: 32,
-      LEFT: 37,
-      UP: 38,
-      RIGHT: 39,
-      DOWN: 40,
-      SHIFT: 16,
-      CTRL: 17,
-      ALT: 18,
-      PAGE_UP: 33,
+      TAB:        9,
+      ENTER:     13,
+      ESC:       27,
+      SPACE:     32,
+      LEFT:      37,
+      UP:        38,
+      RIGHT:     39,
+      DOWN:      40,
+      SHIFT:     16,
+      CTRL:      17,
+      ALT:       18,
+      PAGE_UP:   33,
       PAGE_DOWN: 34,
-      HOME: 36,
-      END: 35,
-      BACKSPACE: 8,
-      DELETE: 46
+      HOME:      36,
+      END:       35,
+      BACKSPACE:  8,
+      DELETE:    46
   };
 
   Container = new String                                         +
@@ -74,7 +74,7 @@
             }
           });
         },
-        enter: function () {
+        choose: function () {
           if(this.getIndex() !== undefined) {
             li = $container.find("li").get(this.getIndex());
             li.click();
@@ -107,14 +107,18 @@
           e.which === KEY.BACKSPACE ||
           e.which === KEY.DELETE
         ) {
-          resultList.update($(this).val());
+          resultList.update();
         }
       });
 
-      $container.find("input").on("keyup", function (e) {
+      $container.find("input").on("keydown", function (e) {
         switch (e.which) {
+          case KEY.TAB:
+            select.selection.choose();
+            return;
           case KEY.ENTER:
-            select.selection.enter();
+            select.selection.choose();
+            return;
           case KEY.UP:
             if(select.selection.isOver(-1)) { return; }
             select.selection.move(-1);
@@ -122,7 +126,10 @@
           case KEY.DOWN:
             if(select.selection.isOver(1)) { return; }
             select.selection.move(1);
-        return;
+            return;
+          case KEY.ESC:
+            $(select.el).trigger("canceled");
+            return;
         };
       });
 
@@ -141,18 +148,18 @@
         var $li = $("<li>");
         $li.html(value);
         $li.hover(
-            function () {
-              var self = this;
-              $container.find("li").each(function (i, item) {
-                if(self == item) {
-                  select.selection.set(i);
-                  return;
-                }
-              });
-            }, function () {
-              select.selection.clear();
-            }
-            );
+          function () {
+            var self = this;
+            $container.find("li").each(function (i, item) {
+              if(self == item) {
+                select.selection.set(i);
+                return;
+              }
+            });
+          }, function () {
+            select.selection.clear();
+          }
+        );
         $li.click(function(e) {
           $(this).remove();
           select.display.show(this);
@@ -172,7 +179,8 @@
         clear: function () {
           lists = [];
         },
-        update: function (query) {
+        update: function () {
+          var query = $container.find("input").val()
           this.createList(query);
           select.selection.setDefault();
         },
@@ -228,14 +236,14 @@
 
       return {
         createList: function () {
-          reslt_list.createList()
+          reslt_list.createList();
         },
         toggle: function () {
           console.log("toggled list");
           $dropdown_div.toggle();
           if(this.isOpen()) {
             select.selection.setDefault();
-            reslt_list.update($container.find("input").val());
+            reslt_list.update();
             $dropdown_div.find("input").select();
           }
         },
@@ -258,7 +266,7 @@
       this.dropdown = DropDown.init(this);
       this.display =  Display.init(this);
 
-      this.el.on('clickedList', this.el, function () {
+      this.el.on('clickedList canceled', this.el, function () {
         self.dropdown.toggle();
       });
       this.dropdown.toggle();
