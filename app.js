@@ -235,7 +235,16 @@
     init: function (select) {
       var $container = select.$container;
       var $selectedValue = $container.find("[data-sugoi-selectbox-current-value]");
-      $selectedValue.html('未選択'); // 初期化
+
+      (function () {
+        var id = select.el.find("option:selected").val();
+        if(id) {
+          var name = select.$container.find("li[data-id=" + id + "]").html();
+          $selectedValue.html(name);
+        } else {
+          $selectedValue.html('未選択');
+        }
+      })();
 
       return {
         show: function (node) {
