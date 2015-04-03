@@ -21,13 +21,13 @@
       DELETE:    46
   };
 
-  Container = new String                                         +
-        "<div data-selected-base>"                               +
-          "<span class=currentValue data-selected-value></span>" +
-          "<div data-dropdown>"                                  +
-            "<input type='text'>"                                +
-            "<div data-selected-list></div>"                     +
-          "</div>"                                               +
+  Container = new String +
+        "<div data-sugoi-selectbox>" +
+        "<span class=currentValue data-sugoi-selectbox-current-value></span>" +
+          "<div data-sugoi-selectbox-dropdown>" +
+            "<input type='text'>" +
+            "<div data-sugoi-selectbox-list></div>" +
+          "</div>" +
         "</div>";
 
   Selection = {
@@ -82,14 +82,16 @@
         },
         setDefault: function () {
           var currentvalue = $container.find("span").html();
+          var is_finded;
           if(currentvalue) {
             $container.find("li").each(function (i, item) {
               if(currentvalue == $(item).html()) {
                 select.selection.set(i);
+                is_finded = true;
                 return;
               }
             });
-            this.set(0);
+            if(!is_finded) { this.set(0); }
           }
         }
       }
@@ -132,9 +134,6 @@
             return;
         };
       });
-
-      return {
-      }
     }
   }
 
@@ -174,6 +173,11 @@
           $.each(lists, function(i, item){
             $ul.append(item);
           });
+          if($ul.find("li").length == 0) {
+            var $li = $("<li>");
+            $li.html("No matches found");
+            $ul.append($li);
+          }
           return $ul;
         },
         clear: function () {
@@ -190,14 +194,14 @@
         ,
         createList: function (query) {
           this.clear();
-          $container.find("[data-selected-list] ul").remove();
+          $container.find("[data-sugoi-selectbox-list] ul").remove();
           $.each(select.el.find("option"), function () {
             $li = $(this);
             if((new RegExp(query)).test($li.html())) {
               add($(this).html());
             }
           });
-          $container.find("[data-selected-list]").append(
+          $container.find("[data-sugoi-selectbox-list]").append(
             this.htmledLists()
           );
         }
@@ -208,7 +212,7 @@
   var Display = {
     init: function (select) {
       var $container = select.$container;
-      var $selectedValue = $container.find("[data-selected-value]");
+      var $selectedValue = $container.find("[data-sugoi-selectbox-current-value]");
       $selectedValue.html('未選択'); // 初期化
 
       return {
@@ -224,31 +228,30 @@
     init: function (select){ //  draw
       var $el = $(select.el);
       var $container = select.$container;
-      var current_value_span = $container.find("[data-selected-value]");
-      var $dropdown_div = $container.find("[data-dropdown]");
-      var reslt_list = ResultList.init(select);
-      reslt_list.initSearchField();
+      var $dropdown_div = $container.find("[data-sugoi-selectbox-dropdown]");
+      var resultList = ResultList.init(select);
+      resultList.initSearchField();
 
-      current_value_span.on("click", function () {
+      $container.find("[data-sugoi-selectbox-current-value]").on("click", function () {
         $(select.el).trigger('clickedList');
       });
-      reslt_list.createList();
+      resultList.createList();
 
       return {
         createList: function () {
-          reslt_list.createList();
+          resultList.createList();
         },
         toggle: function () {
           console.log("toggled list");
           $dropdown_div.toggle();
           if(this.isOpen()) {
             select.selection.setDefault();
-            reslt_list.update();
+            resultList.update();
             $dropdown_div.find("input").select();
           }
         },
         isOpen: function () {
-          return $dropdown_div.is(':visible')
+          return $dropdown_div.is(':visible');
         }
       }
     }

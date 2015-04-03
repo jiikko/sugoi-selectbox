@@ -2,7 +2,7 @@ ul li:hover {
 //  background-color: red;
 }
 
-.currentValue {
+[data-sugoi-selectbox-current-value] {
   background-color: yellow;
 }
 
