@@ -25,7 +25,7 @@
         "<div data-sugoi-selectbox>" +
           "<span class=currentValue data-sugoi-selectbox-current-value></span>" +
           "<div data-sugoi-selectbox-dropdown>" +
-            "<input type='text'>" +
+            "<input type='text' autocomplete='off'>" +
             "<div data-sugoi-selectbox-list></div>" +
           "</div>" +
         "</div>";
@@ -119,6 +119,7 @@
             select.selection.choose();
             return;
           case KEY.ENTER:
+            e.preventDefault();
             select.selection.choose();
             return;
           case KEY.UP:
@@ -236,6 +237,19 @@
         $(select.el).trigger('clickedList');
       });
       resultList.createList();
+      (function () {
+        var isHover = true;
+        $(select.$container).hover(function () {
+          isHover = true;
+        }, function () {
+          isHover = false;
+        });
+        $(document).on('mouseup', function () {
+          if(!isHover) {
+            $dropdown_div.hide();
+          }
+        });
+      })();
 
       return {
         createList: function () {
