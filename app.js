@@ -218,6 +218,7 @@
           $container.find("[data-sugoi-selectbox-list] ul").remove();
           $.each(select.el.find("option"), function () {
             $li = $(this);
+            if($li.html() === '') { return true; }
             if((new RegExp(query)).test($li.html())) {
               add(
                 { "data-id": $li.val(), "name": $li.html() }
@@ -252,7 +253,7 @@
 
       (function () {
         var width = $container.find("ul").outerWidth();
-        width+= 10;
+        width+= 30;
         $container.css({ "width": width });
       })();
 
