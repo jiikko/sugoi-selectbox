@@ -24,7 +24,7 @@
   Container = new String +
         "<div data-sugoi-selectbox>" +
           "<span class=currentValue data-sugoi-selectbox-current-value></span>" +
-         "<div data-sugoi-selectbox-dropdown>" +
+          "<div data-sugoi-selectbox-dropdown>" +
             "<input type='text' autocomplete='off'>" +
             "<div data-sugoi-selectbox-list></div>" +
           "</div>" +
@@ -219,10 +219,9 @@
           $.each(select.el.find("option"), function () {
             $li = $(this);
             if((new RegExp(query)).test($li.html())) {
-              add({
-                "data-id": $li.val(),
-                "name": $li.html()
-              });
+              add(
+                { "data-id": $li.val(), "name": $li.html() }
+              );
             }
           });
           $container.find("[data-sugoi-selectbox-list]").append(
@@ -253,6 +252,7 @@
 
       (function () {
         var width = $container.find("ul").outerWidth();
+        width+= 10;
         $container.css({ "width": width });
       })();
 

@@ -12,6 +12,7 @@
 
 [data-sugoi-selectbox-current-value] {
   background-color: yellow;
+  display: block;
 }
 
 [data-sugoi-selectbox-list] ul {
