@@ -251,6 +251,11 @@
         }
       })();
 
+      (function () {
+        var width = $container.find("ul").outerWidth();
+        $container.css({ "width": width });
+      })();
+
       return {
         show: function (node) {
           var $node = $(node);
