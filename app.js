@@ -206,14 +206,13 @@
           lists = [];
         },
         update: function () {
-          var query = $container.find("input").val()
+          var query = $container.find("input").val();
           this.createList(query);
           select.selection.setDefault();
         },
         initSearchField: function () {
           return SearchField.init(select, this);
-        }
-        ,
+        },
         createList: function (query) {
           this.clear();
           $container.find("[data-sugoi-selectbox-list] ul").remove();
@@ -238,11 +237,14 @@
     init: function (select) {
       var $container = select.$container;
       var $selectedValue = $container.find("[data-sugoi-selectbox-current-value]");
+      var selectorEscape = function (val) {
+        return val.replace(/[ !"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, '\\$&');
+      };
 
       (function () {
         var id = select.el.find("option:selected").val();
         if(id) {
-          var name = select.$container.find("li[data-id=" + id + "]").html();
+          var name = select.$container.find("li[data-id=" + selectorEscape(id) + "]").html();
           $selectedValue.html(name);
         } else {
           $selectedValue.html('未選択');
