@@ -8,8 +8,6 @@
 
 [data-sugoi-selectbox-dropdown] {
   z-index: 1000;
-  overflow-y: scroll;
-  max-height: 500px;
 }
 
 [data-sugoi-selectbox-current-value] {
@@ -17,8 +15,10 @@
 }
 
 [data-sugoi-selectbox-list] ul {
+  max-height: 300px;
   padding: 0px;
   margin: 0px;
+  overflow-y: auto;
 }
 
 [data-sugoi-selectbox-list] li {

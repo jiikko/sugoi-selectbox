@@ -34,12 +34,15 @@
   Selection = {
     init: function (select) {
       var $container = select.$container;
+      var lists = function () {
+        return $container.find("li");
+      };
 
       return {
         isOver: function (relative_position) {
           var next_position = this.getIndex() + relative_position;
           if(
-              $container.find("li").length <= next_position ||
+              lists().length <= next_position ||
               next_position < 0
             ) {
               return true;
@@ -47,7 +50,7 @@
         },
         getIndex: function () {
           var index;
-          $container.find("li").each(function (i, item) {
+          lists().each(function (i, item) {
             if($(item).hasClass("sugoi-highlight")) {
               index = i;
             }
@@ -60,24 +63,23 @@
             if(current > 0) {
               move_to_position = current;
             }
-          console.log(move_to_position);
           this.set(move_to_position);
         },
         clear: function (index) {
-          $container.find("li").removeClass("sugoi-highlight");
+          lists().removeClass("sugoi-highlight");
+        },
+        get: function () {
+          return $(lists().get(this.getIndex()));
         },
         set: function (index) {
-          $container.find("li").each(function (i, item) {
-            if(i === index) {
-              $(item).addClass("sugoi-highlight");
-            } else {
-              $(item).removeClass("sugoi-highlight");
-            }
-          });
+          this.clear();
+          $activeList = $(lists().get(index));
+          $activeList.addClass("sugoi-highlight");
+          $(select.el).trigger("scrollToSelecting");
         },
         choose: function () {
           if(this.getIndex() !== undefined) {
-            li = $container.find("li").get(this.getIndex());
+            li = lists().get(this.getIndex());
             li.click();
           }
         },
@@ -85,11 +87,11 @@
           var currentvalue = $container.find("span").html();
           var is_finded;
           if(currentvalue) {
-            $container.find("li").each(function (i, item) {
-              if(currentvalue == $(item).html()) {
+            lists().each(function (i, item) {
+              if(currentvalue === $(item).html()) {
                 select.selection.set(i);
                 is_finded = true;
-                return;
+                return false;
               }
             });
             if(!is_finded) { this.set(0); }
@@ -205,6 +207,9 @@
         clear: function () {
           lists = [];
         },
+        result: function () {
+          return $container.find("ul");
+        },
         update: function () {
           var query = $container.find("input").val();
           this.createList(query);
@@ -228,7 +233,27 @@
           $container.find("[data-sugoi-selectbox-list]").append(
             this.htmledLists()
           );
-        }
+        },
+        scrollToSelecting: function (selection) {
+          var listYWithAmariY = selection.get().offset().top + selection.get().outerHeight();
+          var listY = this.result().offset().top + this.result().outerHeight();
+          var amriY = listYWithAmariY - listY;
+
+          // down
+          if(amriY > 0) {
+            this.result().scrollTop(
+              this.result().scrollTop() + amriY
+            );
+          }
+
+          // up
+          var y = selection.get().offset().top - this.result().offset().top;
+          if(y < 0) {
+            this.result().scrollTop(
+              this.result().scrollTop() + y
+            );
+          }
+        },
       }
     }
   }
@@ -274,13 +299,12 @@
       var $el = $(select.el);
       var $container = select.$container;
       var $dropdown_div = $container.find("[data-sugoi-selectbox-dropdown]");
-      var resultList = ResultList.init(select);
-      resultList.initSearchField();
+      select.resultList.initSearchField();
 
       $container.find("[data-sugoi-selectbox-current-value]").on("click", function () {
         $(select.el).trigger('clickedList');
       });
-      resultList.createList();
+      select.resultList.createList();
 
       (function () {
         var isHover = true;
@@ -298,14 +322,14 @@
 
       return {
         createList: function () {
-          resultList.createList();
+          select.resultList.createList();
         },
         toggle: function () {
           console.log("toggled list");
           $dropdown_div.toggle();
           if(this.isOpen()) {
             select.selection.setDefault();
-            resultList.update();
+            select.resultList.update();
             $dropdown_div.find("input").select();
           }
         },
@@ -319,20 +343,25 @@
   // あとで名前をかえる
   Select = {
     init: function (el) {
-      var self = this;
       this.el = $(el);
       this.el.hide();
       this.el.after(Container);
       this.$container = $(this.el.next());
       this.hiddenField = HiddenField.init(this);
       this.selection = Selection.init(this);
+      this.resultList = ResultList.init(this);
       this.dropdown = DropDown.init(this);
       this.display =  Display.init(this);
 
+      var self = this;
       this.el.on('clickedList canceled', this.el, function () {
         self.dropdown.toggle();
       });
       this.dropdown.toggle();
+
+      this.el.on('scrollToSelecting', this.el, function () {
+        self.resultList.scrollToSelecting(self.selection);
+      });
     }
   };
 
