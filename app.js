@@ -84,6 +84,10 @@
           }
         },
         setDefault: function () {
+          if($(lists()[0]).data("role") === "blank") {
+            return;
+          }
+
           var currentvalue = $container.find("span").html();
           var is_finded;
           if(currentvalue) {
@@ -199,6 +203,7 @@
           });
           if($ul.find("li").length == 0) {
             var $li = $("<li>");
+            $li.attr("data-role", "blank");
             $li.html("No matches found");
             $ul.append($li);
           }
