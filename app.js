@@ -174,26 +174,27 @@
         var $li = $("<li>");
         $li.html(obj.name);
         $li.attr("data-id", obj["data-id"]);
-        $li.hover(
-          function () {
-            var self = this;
-            $container.find("li").each(function (i, item) {
-              if(self == item) {
-                select.selection.set(i);
-                return;
-              }
-            });
-          }, function () {
-            select.selection.clear();
-          }
-        );
-        $li.click(function(e) {
-          $(this).remove();
-          select.display.show(this);
-          select.el.trigger('clickedList');
-        });
         lists.push($li);
       };
+
+      $container.on("click", "li", function (e) {
+        $listItem = $(e.target)
+        $listItem.remove();
+        select.display.show($listItem);
+        select.el.trigger('clickedList');
+      });
+
+      $container.on("mouseenter", "li", function (e) {
+        var self = this;
+        $container.find("li").each(function (i, item) {
+          if(self == item) {
+            select.selection.set(i);
+            return;
+          }
+        });
+      }).on("mouseleave", "li", function (e) {
+        select.selection.clear();
+      });
 
       return {
         htmledLists: function() {
