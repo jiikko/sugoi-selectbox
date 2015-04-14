@@ -23,7 +23,10 @@
 
   Container = new String +
         "<div data-sugoi-selectbox>" +
-          "<span class=currentValue data-sugoi-selectbox-current-value></span>" +
+          "<div class='data-sugoi-selectbox-close' data-sugoi-selectbox-top>" +
+            "<span class=currentValue data-sugoi-selectbox-current-value></span>" +
+            "<b></b>" +
+          "</div>" +
           "<div data-sugoi-selectbox-dropdown>" +
             "<input type='text' autocomplete='off'>" +
             "<div data-sugoi-selectbox-list></div>" +
@@ -307,7 +310,7 @@
       var $dropdown_div = $container.find("[data-sugoi-selectbox-dropdown]");
       select.resultList.initSearchField();
 
-      $container.find("[data-sugoi-selectbox-current-value]").on("click", function () {
+      $container.find("[data-sugoi-selectbox-top]").on("click", function () {
         $(select.el).trigger('clickedList');
       });
       select.resultList.createList();
@@ -321,7 +324,7 @@
         });
         $(document).on('mouseup', function () {
           if(!isHover) {
-            $dropdown_div.hide();
+            $(select.el).trigger("canceled");
           }
         });
       })();
@@ -331,12 +334,15 @@
           select.resultList.createList();
         },
         toggle: function () {
-          console.log("toggled list");
+          var topNode = $container.find("[data-sugoi-selectbox-top]");
           $dropdown_div.toggle();
           if(this.isOpen()) {
             select.selection.setDefault();
             select.resultList.update();
             $dropdown_div.find("input").select();
+            topNode.removeClass("data-sugoi-selectbox-close");
+          } else {
+            topNode.addClass("data-sugoi-selectbox-close");
           }
         },
         isOpen: function () {
