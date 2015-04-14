@@ -176,18 +176,23 @@
       var add = function (obj) {
         var $li = $("<li>");
         $li.html(obj.name);
+        $li.attr("data-role", "clickable");
         $li.attr("data-id", obj["data-id"]);
-        lists.push($li);
+        list.push($li);
       };
 
       $container.on("click", "li", function (e) {
+        if($(list[0]).data("role") === "blank") {
+          return;
+        }
+
         $listItem = $(e.target)
         $listItem.remove();
         select.display.show($listItem);
         select.el.trigger('clickedList');
       });
 
-      $container.on("mouseenter", "li", function (e) {
+      $container.on("mouseenter", "li[data-role=clickable]", function (e) {
         var self = this;
         $container.find("li").each(function (i, item) {
           if(self == item) {
@@ -202,19 +207,20 @@
       return {
         htmledLists: function() {
           var $ul = $("<ul>");
-          $.each(lists, function(i, item){
+          $.each(list, function(i, item){
             $ul.append(item);
           });
-          if($ul.find("li").length == 0) {
+          if(list.length == 0) {
             var $li = $("<li>");
             $li.attr("data-role", "blank");
             $li.html("No matches found");
+            list.push($li);
             $ul.append($li);
           }
           return $ul;
         },
         clear: function () {
-          lists = [];
+          list = [];
         },
         result: function () {
           return $container.find("ul");
