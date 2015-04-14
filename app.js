@@ -182,6 +182,8 @@
       };
 
       $container.on("click", "li", function (e) {
+        console.log("clicked");
+
         if($(list[0]).data("role") === "blank") {
           return;
         }
@@ -321,6 +323,10 @@
       });
       select.resultList.createList();
 
+      var isOpen = function () {
+        return $dropdown_div.is(':visible');
+      };
+
       (function () {
         var isHover = true;
         $(select.$container).hover(function () {
@@ -329,7 +335,7 @@
           isHover = false;
         });
         $(document).on('mouseup', function () {
-          if(!isHover) {
+          if(!isHover && isOpen()) {
             $(select.el).trigger("canceled");
           }
         });
@@ -342,7 +348,7 @@
         toggle: function () {
           var topNode = $container.find("[data-sugoi-selectbox-top]");
           $dropdown_div.toggle();
-          if(this.isOpen()) {
+          if(isOpen()) {
             select.selection.setDefault();
             select.resultList.update();
             $dropdown_div.find("input").select();
@@ -350,9 +356,6 @@
           } else {
             topNode.addClass("data-sugoi-selectbox-close");
           }
-        },
-        isOpen: function () {
-          return $dropdown_div.is(':visible');
         }
       }
     }
@@ -373,6 +376,7 @@
 
       var self = this;
       this.el.on('clickedList canceled', this.el, function () {
+        console.log("clickedlist or canceled");
         self.dropdown.toggle();
       });
       this.dropdown.toggle();
