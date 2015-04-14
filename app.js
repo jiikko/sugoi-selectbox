@@ -91,17 +91,17 @@
             return;
           }
 
-          var currentvalue = $container.find("span").html();
-          var is_finded;
+          var currentvalue = $container.find("span");
+          var isFinded;
           if(currentvalue) {
             lists().each(function (i, item) {
-              if(currentvalue === $(item).html()) {
+              if(currentvalue.attr("data-id") === $(item).attr("data-id")) {
                 select.selection.set(i);
-                is_finded = true;
+                isFinded = true;
                 return false;
               }
             });
-            if(!is_finded) { this.set(0); }
+            if(!isFinded) { this.set(0); }
           }
         }
       }
