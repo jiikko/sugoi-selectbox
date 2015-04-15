@@ -1,4 +1,4 @@
-# SugoiSelecbox
+# SugoiSelectbox
 jQuery based replacement for select boxes.
 
 ## Features
