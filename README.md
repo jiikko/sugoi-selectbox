@@ -23,14 +23,10 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install sugoi_selectbox-rails
-
-## Usage
 ### Include javascript assets
 Add the following to your app/assets/javascripts/application.js:
 ```
+//= require jquery
 //= require sugoi_selectbox
 ```
 
@@ -39,6 +35,8 @@ Add to your app/assets/stylesheets/application.css:
 ```
 //= require sugoi_selectbox
 ```
+
+## Usage
 
 ```javascript
 $("#select").suguiSelectbox()
