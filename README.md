@@ -1,13 +1,22 @@
 # SugoiSelectbox::Rails
 
-TODO: Write a gem description
+jQuery based replacement for select boxes.
+
+# Features
+
+* Sugoi
+
+# 動作確認しているブラウザ
+
+* Chrome
+* FireFox
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'sugoi_selectbox-rails'
+gem 'sugoi_selectbox-rails', github: 'jiikko/sugoi-selectbox-rails'
 ```
 
 And then execute:
@@ -20,7 +29,9 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```javascript
+$("#select").suguiSelectbox()
+```
 
 ## Contributing
 
