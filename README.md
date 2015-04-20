@@ -23,15 +23,13 @@ And then execute:
 
     $ bundle
 
-### Include javascript assets
-Add the following to your app/assets/javascripts/application.js:
+add in your javascript.js
 ```
 //= require jquery
 //= require sugoi_selectbox
 ```
 
-### Include stylesheet assets
-Add to your app/assets/stylesheets/application.css:
+add in your style.css
 ```
 //= require sugoi_selectbox
 ```
