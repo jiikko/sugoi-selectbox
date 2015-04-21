@@ -2,6 +2,8 @@
 
 jQuery based replacement for select boxes.
 
+![sugoi](https://cloud.githubusercontent.com/assets/1664497/7248919/9405f6fe-e851-11e4-8df6-252d0f948660.gif)
+
 # Features
 
 * Sugoi
@@ -24,13 +26,13 @@ And then execute:
 
     $ bundle
 
-add in your javascript.js
+Add in your javascript.js
 ```
 //= require jquery
 //= require sugoi_selectbox
 ```
 
-add in your style.css
+Add in your style.css
 ```
 //= require sugoi_selectbox
 ```
