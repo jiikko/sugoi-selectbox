@@ -187,8 +187,6 @@
       };
 
       $container.on("click", "li", function (e) {
-        console.log("clicked");
-
         if($(list[0]).data("role") === "blank") {
           return;
         }
@@ -386,7 +384,6 @@
 
       var self = this;
       this.el.on('clickedList canceled', this.el, function () {
-        console.log("clickedlist or canceled");
         self.dropdown.toggle();
       });
       this.dropdown.toggle();
