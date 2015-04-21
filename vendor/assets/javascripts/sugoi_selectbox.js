@@ -114,11 +114,16 @@
       var $hiddenField = $container.find("input[type=hidden]");
       $hiddenField.attr("name", select.el.attr("name"));
 
+      var _set = function () {
+        $container.find("input[type=hidden]").val(
+            $container.find("[data-sugoi-selectbox-current-value]").attr("data-id")
+        );
+      };
+      _set();
+
       return {
         set: function () {
-          $container.find("input[type=hidden]").val(
-            $container.find("[data-sugoi-selectbox-current-value]").attr("data-id")
-          );
+          _set();
         }
       }
     }
@@ -288,6 +293,7 @@
         if(id) {
           var name = select.$container.find("li[data-id=" + selectorEscape(id) + "]").html();
           $selectedValue.html(name);
+          $selectedValue.attr("data-id", id);
         } else {
           $selectedValue.html('未選択');
         }
@@ -371,11 +377,11 @@
          $("<div>").html(Container)
         );
       this.$container = $(this.el.next());
-      this.hiddenField = HiddenField.init(this);
       this.selection = Selection.init(this);
       this.resultList = ResultList.init(this);
       this.dropdown = DropDown.init(this);
       this.display =  Display.init(this);
+      this.hiddenField = HiddenField.init(this);  // list構築後に実行する必要あり
       this.el.hide();
 
       var self = this;
