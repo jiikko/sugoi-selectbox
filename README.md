@@ -1,15 +1,16 @@
-# SugoiSelectbox::Rails
+# sugoi_selectbox-rails
 
 jQuery based replacement for select boxes.
 
 # Features
 
 * Sugoi
+* Lightweight
 
 # 動作確認しているブラウザ
 
-* Chrome
-* FireFox
+* Chrome(PC)
+* FireFox(PC)
 
 ## Installation
 
