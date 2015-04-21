@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["n905i.1214@gmail.com"]
   spec.summary       = %q{select boxes.}
   spec.description   = %q{jQuery based replacement for select boxes.}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/jiikko/sugoi_selectbox-rails"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
