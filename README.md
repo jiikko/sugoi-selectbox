@@ -19,7 +19,7 @@ jQuery based replacement for select boxes.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'sugoi_selectbox-rails', github: 'jiikko/sugoi-selectbox-rails'
+gem 'sugoi_selectbox-rails'
 ```
 
 And then execute:
