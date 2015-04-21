@@ -294,9 +294,10 @@
       })();
 
       (function () {
-        var width = $container.find("ul").outerWidth();
-        width+= 30;
-        $container.css({ "width": width });
+        var width = select.el.outerWidth();
+        var height = select.el.outerHeight();
+        $container.find("[data-sugoi-selectbox]").css({ "width": width });
+        $container.css({ 'height': height });
       })();
 
       return {
@@ -365,14 +366,17 @@
   Select = {
     init: function (el) {
       this.el = $(el);
-      this.el.hide();
-      this.el.after(Container);
+      this.el.after(
+         // wrap for height. css no position is yokuwakrann.
+         $("<div>").html(Container)
+        );
       this.$container = $(this.el.next());
       this.hiddenField = HiddenField.init(this);
       this.selection = Selection.init(this);
       this.resultList = ResultList.init(this);
       this.dropdown = DropDown.init(this);
       this.display =  Display.init(this);
+      this.el.hide();
 
       var self = this;
       this.el.on('clickedList canceled', this.el, function () {
